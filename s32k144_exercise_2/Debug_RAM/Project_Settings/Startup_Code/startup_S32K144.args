@@ -1,0 +1,6 @@
+-c
+-I"C:/Users/PC/workspaceS32DS.3.6.3/s32k144_exercise_2/include"
+-x assembler-with-cpp
+-g3
+-mcpu=cortex-m4
+-specs=rdimon.specs
