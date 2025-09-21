@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+/* delay prototype */
 void delay(volatile uint32_t time);
 
 void delay(volatile uint32_t time)
