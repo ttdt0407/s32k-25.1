@@ -1,3 +1,14 @@
+/**
+ * @file s32k144_pins.h
+ * @author Ta Tran Dinh Tien (tatrandinhtien@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2025-10-02
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+
 #ifndef S32K144_PINS_H_
 #define S32K144_PINS_H_
 
@@ -8,16 +19,26 @@
  *                                  Definitions
  ******************************************************************************/
 
-#define PORT_NUMS                 5U
-
+/* Total number of available PORT instances used in this abstraction */
+#define PORT_NUMS       5U
+/* Logical port indices matching the device's PORT instance ordering */
 #define PORT_A          0
 #define PORT_B          1
 #define PORT_C          2
 #define PORT_D          3
 #define PORT_E          4
-
+/* Encode a (port, pin) pair into a single 16-bit value: high byte = port, low byte = pin */
 #define PIN_ID(port, pin)         ((port << 8) | (pin))
 
+/**
+ * @brief Enumeration of all PORT A..E pins using the encoded (port,pin) scheme.
+ *
+ * Each value is produced by PIN_ID(PORT_X, n) where:
+ *  - PORT_X is one of PORT_A..PORT_E (0..4)
+ *  - n is the pin index within that port (0..16 / 17 depending on port).
+ *
+ * The enumeration makes it convenient to pass a single PinName_t to helper functions.
+ */
 typedef enum
 {
 	/* Pin of PORT A */
@@ -119,9 +140,12 @@ typedef enum
     PTE15 = PIN_ID(PORT_E, 15),
     PTE16 = PIN_ID(PORT_E, 16),
 
-}PinName_t;
+} PinName_t;
 
-/* Array contains pointer to ports and pins */
+/* Base address lookup tables (s32k144 CMSIS style) for PORT and GPIO instances.
+ * IP_PORT_BASE_PTRS / IP_GPIO_BASE_PTRS come from the device header and contain
+ * the memory-mapped base addresses for PORTA..PORTE and PTA..PTE respectively.
+ */
 static PORT_Type *const s_port_base_ptr[PORT_NUMS] = IP_PORT_BASE_PTRS;
 static GPIO_Type *const s_gpio_base_ptr[PORT_NUMS] = IP_GPIO_BASE_PTRS;
 
@@ -129,9 +153,35 @@ static GPIO_Type *const s_gpio_base_ptr[PORT_NUMS] = IP_GPIO_BASE_PTRS;
  *                                      API
  ******************************************************************************/
 
+/**
+ * @brief Retrieve the PORT register block pointer for an encoded pin.
+ *
+ * Decodes the (port) portion of the PinName_t and returns the matching PORT_Type*.
+ *
+ * @param pin Encoded pin value (see PinName_t). A zero value (PTA0) is currently
+ *            treated as invalid inside implementation.
+ * @return PORT_Type* Pointer to PORT instance; NULL if the pin (or decoded port) is invalid.
+ */
 PORT_Type *PORT_GetValue(PinName_t pin);
+
+/**
+ * @brief Retrieve the GPIO register block pointer for an encoded pin.
+ *
+ * Decodes the (port) portion of the PinName_t and returns the matching GPIO_Type*.
+ *
+ * @param pin Encoded pin value (see PinName_t). A zero value (PTA0) is currently
+ *            treated as invalid inside implementation.
+ * @return GPIO_Type* Pointer to GPIO instance; NULL if the pin (or decoded port) is invalid.
+ */
 GPIO_Type *GPIO_GetValue(PinName_t pin);
-int32_t Pin_GetValue(PinName_t pin);
+
+/**
+ * @brief Decode and return the pin number (bit position) from an encoded pin.
+ *
+ * @param pin Encoded pin value.
+ * @return int32_t Pin (0..n). Returns 0 if input is 0 (PTA0) or invalid (no distinction made).
+ */
+uint32_t Pin_GetValue(PinName_t pin);
 
 
 #endif /* S32K144_PINS_H_ */
