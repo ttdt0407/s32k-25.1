@@ -60,7 +60,7 @@ static uint32_t scg_get_mode_reg(SCG_CLOCK_MODE_t mode)
             result = IP_SCG->VCCR;
             break;
         default:
-            printf("No pointer to mode register !\n");
+            printf("Mode register is invalid !\n");
             break;
     }
     return result;
