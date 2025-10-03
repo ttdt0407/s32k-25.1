@@ -55,7 +55,7 @@ PCC_STATUS_t PCC_EnableClock(PCC_PERIPHERALS_t peripheral)
         return PCC_STATUS_ERROR;
     }
 
-    /*Clear CGC bit*/
+    /*Set CGC bit*/
     *pReg |= (1U << PCC_PCCn_CGC_SHIFT);
 
     return result;
